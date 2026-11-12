@@ -3,8 +3,8 @@
  *  Assignment: Your Own String Library
  *  Course:     Programming with C
  *
- *  Name:       [YOUR NAME]
- *  Student ID: [YOUR ID]
+ *  Name:       [BUTERA Epaphra]
+ *  Student ID: [20251NET078]
  * ============================================================================
  *
  *  HOW TO COMPILE AND RUN
@@ -61,7 +61,54 @@
  *  Write each helper ABOVE the functions that use it.
  */
 
+char my_to_lower(char c)
+  {
+	if (c >= 'A' && c <= 'Z')
+	{
+	     return c + ('a' - 'A');
 
+	}
+
+	return c;
+}
+
+size_t my_strlen(const char *s)
+{
+	size_t length = 0;
+
+	while (*s != '\0')
+	{
+	   length++;
+	   s++;
+	}
+
+	return length;
+
+}
+int matches_at(const char *p, const char *needle)
+{
+	while (*needle != '\0')
+	{
+
+	   if (*p == '\0' || *p != *needle)
+		return 0;
+
+	   p++;
+	   needle++;
+	}
+
+	return 1;
+}
+
+
+
+int is_blank(char c)
+{
+   if (c == ' ' || c == '\t')
+	return 1;
+
+   return 0;
+}
 
 
 /* ============================================================================
@@ -72,7 +119,7 @@
  *
  *  HINTS
  *   - Walk a pointer through s. At each position, check for c BEFORE you
- *     check for the end of the string. Why does the order matter when
+ *    check for the end of the string. Why does the order matter when
  *     c is '\0'?
  *   - You are returning a position inside s, not a copy of anything.
  *
@@ -86,13 +133,24 @@
  */
 const char *str_find_char(const char *s, char c)
 {
-    (void)s;   /* remove these (void) lines once you use the parameters */
-    (void)c;
+    
+	const char *p = s;
 
-    /* TODO */
+	while (*p != '\0')
+
+	{
+	    if(*p == c)
+	       return p;
+
+        	p++;
+
+	}
+
+	if (c =='\0')
+	    return p;
+
     return NULL;
 }
-
 
 /* ============================================================================
  *  2. str_reverse
@@ -117,9 +175,32 @@ const char *str_find_char(const char *s, char c)
  */
 void str_reverse(char *s)
 {
-    (void)s;
+    if (*s == '\0')
+	return;
 
-    /* TODO */
+    char *start = s;
+    char *end = s;
+
+    while (*end != '\0')
+    { 
+	end++;
+    }
+
+    end--;
+
+    while (start < end)
+    {
+
+	char temp = *start;
+	*start = *end;
+	*end = temp;
+
+	start++;
+	end--;
+    }
+
+
+    
 }
 
 
@@ -149,11 +230,29 @@ void str_reverse(char *s)
  */
 int str_compare_ci(const char *a, const char *b)
 {
-    (void)a;
-    (void)b;
+   while (*a != '\0' && *b != '\0')
+    {
+	char char_a = my_to_lower(*a);
+	char char_b = my_to_lower(*b);
 
-    /* TODO */
-    return 0;
+	if (char_a < char_b)
+	   return -1;
+
+	if (char_a > char_b)
+	   return 1;
+
+	a++;
+	b++;
+
+    }
+
+    if(* a== '\0' && *b == '\0')
+	return 0;
+
+    if (*a == '\0')
+	return -1;
+
+    return 1;
 }
 
 
@@ -187,12 +286,23 @@ int str_compare_ci(const char *a, const char *b)
  */
 size_t str_copy_bounded(char *dst, const char *src, size_t size)
 {
-    (void)dst;
-    (void)src;
-    (void)size;
+    size_t length = my_strlen(src);
 
-    /* TODO */
-    return 0;
+    if (size ==0)
+	return length;
+
+    size_t i = 0;
+
+    while (i < size - 1 && src[i] !='\0')
+    {
+	dst[i] = src[i];
+	i++;
+    }
+
+    dst[i] = '\0';
+
+
+    return length;
 }
 
 
@@ -223,10 +333,21 @@ size_t str_copy_bounded(char *dst, const char *src, size_t size)
  */
 const char *str_find_sub(const char *hay, const char *needle)
 {
-    (void)hay;
-    (void)needle;
+   const char *p = hay;
 
-    /* TODO */
+   if (*needle == '\0')
+	return hay;
+
+   while (*p !='\0')
+   {
+
+	if (matches_at(p, needle))
+	   return p;
+
+
+	p++;
+   }
+
     return NULL;
 }
 
@@ -258,12 +379,40 @@ const char *str_find_sub(const char *hay, const char *needle)
  */
 size_t str_squeeze(char *s)
 {
-    (void)s;
+   char *read = s;
+   char *write = s;
 
-    /* TODO */
-    return 0;
+
+   while (*read != '\0')
+   {
+	if (is_blank(*read))
+	  {
+		while (is_blank(*read))
+		{
+		   read++;
+		}
+
+		if  (*read == '\0')
+		   break;
+
+		if (write != s)
+		{
+		   *write =' ';
+		   write++;
+		}
+	   }
+
+	   else
+	   {
+		*write =*read;
+		write++;
+		read++;
+	   }
+   }
+*write = '\0';
+
+return (size_t)(write - s);
 }
-
 
 /* ============================================================================
  *  7. str_split
@@ -296,15 +445,39 @@ size_t str_squeeze(char *s)
  */
 int str_split(char *s, char delim, char *fields[], int max_fields)
 {
-    (void)s;
-    (void)delim;
-    (void)fields;
-    (void)max_fields;
+   char *start = s;
+   int count =0;
+   char *p =s;
 
-    /* TODO */
-    return 0;
+   while (*p != '\0')
+   { 
+	if (*p == delim)
+	{
+
+	   *p = '\0';
+
+	   if (count < max_fields)
+	   {
+		fields[count] = start;
+	   }
+
+	   count++;
+	   start = p + 1;
+
+	}
+
+	p++;
+   }
+   if (count < max_fields)
+
+   {
+	fields[count] = start;
+   }
+
+   count++;
+
+   return count;
 }
-
 
 /* ============================================================================
  *  main: YOUR testing area. The autograder ignores everything in here.
